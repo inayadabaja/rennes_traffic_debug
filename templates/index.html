@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rennes Traffic Monitoring</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1>Surveillance du trafic routier – Rennes Métropole</h1>
+            <p>Application déboguée avec monitoring, journalisation et visualisation.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="dashboard-grid">
+            <article class="card">
+                <h2>Prédiction</h2>
+
+                <form action="/predict" method="post" class="prediction-form">
+                    <label for="hour">Choisissez une heure</label>
+                    <select id="hour" name="hour">
+                        {% for hour in hours %}
+                            <option value="{{ hour }}"
+                                {% if selected_hour is defined and selected_hour == hour %}selected{% endif %}>
+                                {{ "%02d:00"|format(hour) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Prédire</button>
+                </form>
+
+                {% if text_pred %}
+                <div class="prediction-result" style="border-left: 8px solid {{ color_pred }};">
+                    <h3>Résultat</h3>
+                    <p><strong>{{ text_pred }}</strong></p>
+                </div>
+                {% endif %}
+
+                {% if error_message %}
+                <div class="error-box">
+                    <strong>Erreur :</strong> {{ error_message }}
+                </div>
+                {% endif %}
+            </article>
+
+            <article class="card">
+                <h2>Visualisation du trafic</h2>
+                <div id="traffic-map"></div>
+            </article>
+        </section>
+
+        <section class="links">
+            <a href="/dashboard" target="_blank">Ouvrir le dashboard de monitoring</a>
+            <a href="/health" target="_blank">Tester la route de santé</a>
+        </section>
+    </main>
+
+    <script>
+        const graph = {{ graph_json | safe }};
+        if (graph && graph.data) {
+            Plotly.newPlot('traffic-map', graph.data, graph.layout || {});
+        }
+    </script>
+</body>
+</html>

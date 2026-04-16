@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+.hero {
+    background: linear-gradient(135deg, #1d4ed8, #0f172a);
+    color: white;
+    padding: 32px 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.prediction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.prediction-form select,
+.prediction-form button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+.prediction-form button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.prediction-result {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.error-box {
+    margin-top: 16px;
+    padding: 12px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 10px;
+}
+
+#traffic-map {
+    width: 100%;
+    height: 550px;
+}
+
+.links {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.links a {
+    color: #2563eb;
+    font-weight: bold;
+    text-decoration: none;
+}

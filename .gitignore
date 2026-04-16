@@ -1,0 +1,17 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.env
+mlruns/
+monitoringdashboard.db
+logs/*.log
+data/*.csv
+data/*.json
+
+.DS_Store
+Thumbs.db
+flask_monitoringdashboard.db
