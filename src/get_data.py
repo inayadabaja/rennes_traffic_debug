@@ -23,19 +23,22 @@ def fetch_data() -> dict:
 
 
 def processing_one_point(record: dict) -> dict:
-    """
-    Extraction robuste d'un enregistrement.
-    On évite d'utiliser des clés supposées non présentes.
-    """
-
-    # géométrie
     geo = record.get("geo_point_2d") or {}
-    lat = geo.get("lat") or geo.get("latitude")
-    lon = geo.get("lon") or geo.get("longitude")
 
-    # trafic : on essaie plusieurs clés plausibles
+    lat = None
+    lon = None
+
+    if isinstance(geo, dict):
+        lat = geo.get("lat") or geo.get("latitude")
+        lon = geo.get("lon") or geo.get("lng") or geo.get("longitude")
+    elif isinstance(geo, list) and len(geo) >= 2:
+        lat = geo[0]
+        lon = geo[1]
+
     traffic = (
-        record.get("traffic")
+        record.get("trafficStatus")     # clé officielle actuelle
+        or record.get("traffic")
+        or record.get("traffic_status")
         or record.get("etat_trafic")
         or record.get("etat_du_trafic")
         or record.get("status")
@@ -58,7 +61,7 @@ def processing_one_point(record: dict) -> dict:
 
     return {
         "road_name": road_name,
-        "traffic": str(traffic).lower(),
+        "traffic": str(traffic),
         "lat": lat,
         "lon": lon,
         "datetime": dt,
@@ -67,7 +70,6 @@ def processing_one_point(record: dict) -> dict:
 
 def get_clean_data() -> pd.DataFrame:
     payload = fetch_data()
-
     records = payload.get("results", [])
     rows = [processing_one_point(r) for r in records]
 
@@ -76,7 +78,13 @@ def get_clean_data() -> pd.DataFrame:
     if res_df.empty:
         return pd.DataFrame(columns=["road_name", "traffic", "lat", "lon", "datetime"])
 
+    for col in ["road_name", "traffic", "lat", "lon", "datetime"]:
+        if col not in res_df.columns:
+            res_df[col] = None
+
+    res_df["lat"] = pd.to_numeric(res_df["lat"], errors="coerce")
+    res_df["lon"] = pd.to_numeric(res_df["lon"], errors="coerce")
+
     res_df = res_df.dropna(subset=["lat", "lon"])
-    res_df = res_df[res_df["traffic"] != "unknown"]  # crochet fermant corrigé
 
     return res_df.reset_index(drop=True)
