@@ -11,13 +11,13 @@
     <header class="hero">
         <div class="container">
             <h1>Surveillance du trafic routier – Rennes Métropole</h1>
-            <p>Application déboguée avec monitoring, journalisation, prédiction et carte interactive.</p>
+            <p>Application déboguée avec monitoring, journalisation et visualisation.</p>
         </div>
     </header>
 
     <main class="container">
         <section class="dashboard-grid">
-            <article class="card prediction-card">
+            <article class="card">
                 <h2>Prédiction</h2>
 
                 <form action="/predict" method="post" class="prediction-form">
@@ -40,12 +40,6 @@
                 </div>
                 {% endif %}
 
-                <div class="data-summary">
-                    <h3>Données chargées</h3>
-                    <p><strong id="nb-points">{{ nb_points | default(0) }}</strong> points affichés</p>
-                    <p class="muted">Dernière horodate : <span id="last-datetime">{{ last_datetime | default('') }}</span></p>
-                </div>
-
                 {% if error_message %}
                 <div class="error-box">
                     <strong>Erreur :</strong> {{ error_message }}
@@ -53,69 +47,23 @@
                 {% endif %}
             </article>
 
-            <article class="card map-card">
-                <div class="map-header">
-                    <div>
-                        <h2>Visualisation du trafic</h2>
-                        <p class="muted">Carte interactive : déplacement par glisser-déposer, zoom molette, double-clic pour réinitialiser.</p>
-                    </div>
-                    <button type="button" id="refresh-map" class="secondary-button">Rafraîchir</button>
-                </div>
+            <article class="card">
+                <h2>Visualisation du trafic</h2>
                 <div id="traffic-map"></div>
-                <p id="map-status" class="muted map-status">Carte chargée.</p>
             </article>
         </section>
 
         <section class="links">
             <a href="/dashboard" target="_blank">Ouvrir le dashboard de monitoring</a>
             <a href="/health" target="_blank">Tester la route de santé</a>
-            <a href="/api/traffic-map" target="_blank">Voir le JSON de la carte</a>
         </section>
     </main>
 
     <script>
-        const initialGraph = {{ graph_json | safe }};
-        const plotlyConfig = {{ plotly_config | tojson }};
-        const mapDiv = document.getElementById('traffic-map');
-        const mapStatus = document.getElementById('map-status');
-        const nbPoints = document.getElementById('nb-points');
-        const lastDatetime = document.getElementById('last-datetime');
-
-        function drawGraph(graph) {
-            if (graph && graph.data) {
-                Plotly.react(mapDiv, graph.data, graph.layout || {}, plotlyConfig);
-            }
+        const graph = {{ graph_json | safe }};
+        if (graph && graph.data) {
+            Plotly.newPlot('traffic-map', graph.data, graph.layout || {});
         }
-
-        drawGraph(initialGraph);
-
-        window.addEventListener('resize', () => {
-            Plotly.Plots.resize(mapDiv);
-        });
-
-        async function refreshMap() {
-            try {
-                mapStatus.textContent = 'Rafraîchissement en cours...';
-                const response = await fetch('/api/traffic-map', { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                const payload = await response.json();
-                const graph = JSON.parse(payload.graph_json);
-                drawGraph(graph);
-                nbPoints.textContent = payload.nb_points ?? 0;
-                lastDatetime.textContent = payload.last_datetime ?? '';
-                mapStatus.textContent = 'Carte rafraîchie sans rechargement de page.';
-            } catch (error) {
-                console.error(error);
-                mapStatus.textContent = 'Impossible de rafraîchir la carte. Voir logs/errors.log.';
-            }
-        }
-
-        document.getElementById('refresh-map').addEventListener('click', refreshMap);
-
-        // Rennes Métropole indique un délai de donnée d'environ 3 minutes : on garde un rafraîchissement cohérent.
-        window.setInterval(refreshMap, 180000);
     </script>
 </body>
 </html>
