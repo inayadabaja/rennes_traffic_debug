@@ -11,19 +11,15 @@ body {
     padding: 32px 0;
 }
 
-.hero h1 {
-    margin-bottom: 8px;
-}
-
 .container {
-    width: 94%;
-    max-width: 1380px;
+    width: 92%;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 340px minmax(0, 1fr);
+    grid-template-columns: 340px 1fr;
     gap: 20px;
     margin: 24px 0;
 }
@@ -35,10 +31,6 @@ body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
-.prediction-card {
-    align-self: start;
-}
-
 .prediction-form {
     display: flex;
     flex-direction: column;
@@ -46,12 +38,10 @@ body {
 }
 
 .prediction-form select,
-.prediction-form button,
-.secondary-button {
+.prediction-form button {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
-    font-size: 15px;
 }
 
 .prediction-form button {
@@ -61,21 +51,7 @@ body {
     cursor: pointer;
 }
 
-.secondary-button {
-    background: #e0ecff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
-    cursor: pointer;
-    font-weight: 700;
-}
-
-.prediction-form button:hover,
-.secondary-button:hover {
-    filter: brightness(0.95);
-}
-
-.prediction-result,
-.data-summary {
+.prediction-result {
     margin-top: 16px;
     padding: 12px;
     background: #f8fafc;
@@ -90,38 +66,13 @@ body {
     border-radius: 10px;
 }
 
-.map-card {
-    min-width: 0;
-}
-
-.map-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-.map-header h2 {
-    margin-bottom: 4px;
-}
-
-.muted {
-    color: #64748b;
-    font-size: 14px;
-}
-
 #traffic-map {
     width: 100%;
-    height: 650px;
-}
-
-.map-status {
-    margin-top: 10px;
+    height: 550px;
 }
 
 .links {
     display: flex;
-    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 30px;
 }
@@ -130,14 +81,4 @@ body {
     color: #2563eb;
     font-weight: bold;
     text-decoration: none;
-}
-
-@media (max-width: 900px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-
-    #traffic-map {
-        height: 520px;
-    }
 }
